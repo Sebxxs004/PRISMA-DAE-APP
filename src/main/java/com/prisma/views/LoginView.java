@@ -1,8 +1,8 @@
 package com.prisma.views;
 
 import com.prisma.ui.Theme;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -13,7 +13,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class LoginView {
