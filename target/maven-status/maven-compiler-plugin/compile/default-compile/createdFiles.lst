@@ -5,6 +5,7 @@ com\prisma\ui\Theme.class
 com\prisma\views\PlayerView$GroupMeta.class
 com\prisma\views\LoginView.class
 com\prisma\views\PlayerView.class
+com\prisma\views\PlayerView$2.class
 com\prisma\views\AdminView.class
 com\prisma\views\PlayerView$GroupBounds.class
 com\prisma\views\PlayerView$1.class
