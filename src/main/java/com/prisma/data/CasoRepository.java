@@ -11,42 +11,36 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
+
 import com.prisma.models.Caso;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-public final class CasoRepository {
-    private static final ObservableList<Caso> CASOS = FXCollections.observableArrayList();
+@Service
+public class CasoRepository {
+    private final List<Caso> casos = new ArrayList<>();
 
     private static final Set<String> IMAGE_EXTENSIONS = Set.of(
             ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"
     );
 
-    static {
+    @PostConstruct
+    public void init() {
         loadFromCasosFolder();
-        if (CASOS.isEmpty()) {
+        if (casos.isEmpty()) {
             seed();
         }
     }
 
-    private CasoRepository() {
+    public List<Caso> getCasos() {
+        return casos;
     }
 
-    public static ObservableList<Caso> getCasos() {
-        return CASOS;
+    public void addCaso(Caso caso) {
+        casos.add(caso);
     }
 
-    public static void addCaso(Caso caso) {
-        CASOS.add(caso);
-    }
-
-    /**
-     * Escanea la carpeta casos/ buscando imágenes.
-     * Por cada imagen encontrada, crea un Caso cuyo nombre es el nombre
-     * del archivo sin extensión y cuya imagenPath es la ruta absoluta.
-     */
-    private static void loadFromCasosFolder() {
+    private void loadFromCasosFolder() {
         Path casosDir = resolveCasosFolder();
         if (casosDir == null || !Files.isDirectory(casosDir)) {
             return;
@@ -67,13 +61,10 @@ public final class CasoRepository {
         }
 
         found.sort(Comparator.comparing(Caso::getNombre, String.CASE_INSENSITIVE_ORDER));
-        CASOS.addAll(found);
+        casos.addAll(found);
     }
 
-    /**
-     * Intenta resolver la carpeta casos/ relativa al directorio de trabajo.
-     */
-    private static Path resolveCasosFolder() {
+    private Path resolveCasosFolder() {
         Path userDir = Paths.get(System.getProperty("user.dir"), "casos");
         if (Files.isDirectory(userDir)) {
             return userDir;
@@ -81,23 +72,22 @@ public final class CasoRepository {
         return null;
     }
 
-    private static boolean isImage(Path path) {
+    private boolean isImage(Path path) {
         String name = path.getFileName().toString().toLowerCase();
         return IMAGE_EXTENSIONS.stream().anyMatch(name::endsWith);
     }
 
-    private static String stripExtension(String fileName) {
+    private String stripExtension(String fileName) {
         int dotIndex = fileName.lastIndexOf('.');
         return dotIndex > 0 ? fileName.substring(0, dotIndex) : fileName;
     }
 
-    /** Datos de prueba de fallback cuando la carpeta casos/ está vacía o no existe. */
-    private static void seed() {
-        if (!CASOS.isEmpty()) {
+    private void seed() {
+        if (!casos.isEmpty()) {
             return;
         }
 
-        CASOS.addAll(
+        casos.addAll(List.of(
                 new Caso(
                         "Caso Aurora",
                         "Investigación inicial por alteración de evidencia en zona urbana.",
@@ -148,6 +138,6 @@ public final class CasoRepository {
                         List.of("Amenazas", "Asociación ilícita"),
                         List.of("Fiscal", "Investigadores", "Vecinos")
                 )
-        );
+        ));
     }
 }
